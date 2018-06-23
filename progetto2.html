@@ -1,0 +1,219 @@
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+<script type="text/javascript" src="Library/Chart.js"></script>
+<script type="text/javascript" src="Library/Chart.min.js"></script>
+<script type="text/javascript" src="Library/d3.js"></script>
+</head>
+
+<body>
+
+<div id="div1" style="position:absolute;left:5%;height:10%;width:40%;height:10em;">
+<canvas id="myChart"></canvas>
+</div>
+
+<div id="div2" style="position:absolute;left:50%;height:10%;width:40%;height:10em;">
+<canvas id="myChart1"></canvas>
+</div>
+
+<button id="btn_canc" value="Cancella" onclick="cancellaGrafico()">Cancella</button>
+<br>
+<button id="btn_draw" value="Disegna" onclick="disegnaGrafico()">Disegna</button>
+
+</body>
+
+</html>
+<script>
+
+var array_valori=[];
+var nomi_file=['ds176','ds179','ds306'];
+init();
+
+/************ Caricamento dati dai file openData   ********************/
+
+function init() {
+
+    for(i=0;i<nomi_file.length;i++)
+        {
+            loadJSON(nomi_file[i],function(response) {
+        });
+    }
+}
+
+
+
+function loadJSON(file,callback) {   
+
+    var xobj = new XMLHttpRequest();
+        xobj.overrideMimeType("application/json");
+    xobj.open('GET', 'Dataset/'+file+'.json' , true);
+    xobj.onreadystatechange = function () {
+          if (xobj.readyState == 4 && xobj.status == "200") {
+            // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+           // console.log(JSON.parse(xobj.responseText));
+            array_valori[file] = JSON.parse(xobj.responseText);
+            callback(xobj.responseText);
+          }
+    }; 
+    xobj.send(null);  
+ }
+
+
+//console.log(array_valori);
+
+/************ Fine caricamento dati   ********************/
+
+
+ //  ds176 --> FIELD1: "Anno", FIELD2: "Mese", FIELD3: "NaturaIncidente", FIELD4: "Incidenti", FIELD5: "Feriti", FIELD6: "Morti"
+                                                                                    
+                                                                             /*  ds179 --> FIELD1: "Anno",  "FIELD2": "Mese",  "FIELD3": "incidenti1veicolo", "FIELD4": "morti1veicolo", "FIELD5": "feriti1veicolo", 
+                                                                                             "FIELD6": "incidenti2veicoli",  "FIELD7": "morti2veicoli", "FIELD8": "feriti2veicoli", "FIELD9": "incidenti3veicoli",
+                                                                                             "FIELD10": "morti3veicoli", "FIELD11": "feriti3veicoli", "FIELD12": "incidenti4veicoli", "FIELD13": "morti4veicoli",
+                                                                                             "FIELD14": "feriti4veicoli", "FIELD15": "incidenti5veicoli", "FIELD16": "morti5veicoli", "FIELD17": "feriti5veicoli",
+                                                                                             "FIELD18": "incidenti6veicoli", "FIELD19": "morti6veicoli", "FIELD20": "feriti6veicoli", "FIELD21": "incidenti7epiuveicoli",
+                                                                                             "FIELD22": "morti7epiuveicoli", "FIELD23": "feriti7epiuveicoli"
+                                                                            */
+                                                                            /* ds306    Anno,"Giorno di rilevamento massima giornaliera","Giorno di rilevamento massima oraria","Massima giornaliera","Massima oraria":
+                                                                                        Mese,"N� giorni con precipitazione","N� giorni con precipitazione intensa (>= 20 mm/g)","N� ore con precipitazione",
+                                                                                        "N� ore con precipitazione intensa (>= 5 mm/h)",Totale: "241,6"
+                                                                            */
+
+
+setTimeout(function(){
+// da qui ho accesso hai dati
+
+tipo_incidenti=[];
+anno_precipitazioni=[];
+anno_incidenti=[];
+
+for (i=1;i<array_valori['ds176'].length;i++)
+{
+    if(tipo_incidenti[array_valori['ds176'][i]['FIELD3']]==null)
+    {
+        tipo_incidenti[array_valori['ds176'][i]['FIELD3']]=parseInt(array_valori['ds176'][i]['FIELD4']);
+    }
+    else
+    {
+        tipo_incidenti[array_valori['ds176'][i]['FIELD3']]=tipo_incidenti[array_valori['ds176'][i]['FIELD3']]+parseInt(array_valori['ds176'][i]['FIELD4']);
+    }
+
+if(array_valori['ds176'][i]['FIELD1']>2007)
+   { 
+     if(anno_incidenti[array_valori['ds176'][i]['FIELD1']]==null)
+        {
+        anno_incidenti[array_valori['ds176'][i]['FIELD1']]=parseInt(array_valori['ds176'][i]['FIELD4']);
+        }
+     else
+        {
+        anno_incidenti[array_valori['ds176'][i]['FIELD1']]=anno_incidenti[array_valori['ds176'][i]['FIELD1']]+parseInt(array_valori['ds176'][i]['FIELD4']);
+        }
+    }
+}
+
+for (i=0;i<array_valori['ds306'].length;i++)
+{
+    if(anno_precipitazioni[array_valori['ds306'][i]['Anno']]==null)
+    {
+        anno_precipitazioni[array_valori['ds306'][i]['Anno']]=parseInt(array_valori['ds306'][i]['N� giorni con precipitazione']);
+    }
+    else
+    {
+        anno_precipitazioni[array_valori['ds306'][i]['Anno']]=anno_precipitazioni[array_valori['ds306'][i]['Anno']]+parseInt(array_valori['ds306'][i]['N� giorni con precipitazione']);
+    }
+}
+
+
+/*
+console.log(anno_incidenti);
+console.log(anno_precipitazioni);
+*/
+
+var ctx = document.getElementById('myChart').getContext('2d');
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'radar',
+  
+    // The data for our dataset
+    data: {
+        labels: Object.keys(tipo_incidenti), //["January", "February", "March", "April", "May", "June", "July"],
+        datasets: [{
+            label: "Frequenza Incidenti per tipologia",
+            backgroundColor: 'green',//'rgb(255, 99, 132)',
+            borderColor: 'blue',//'rgb(255, 99, 132)',
+            data: Object.values(tipo_incidenti) , //[0, 10, 5, 2, 20, 30, 45],
+        }]
+    },
+
+    
+    // Configuration options go here
+    options: {}
+});
+
+
+
+
+
+},100);   
+
+
+function cancellaGrafico()
+{
+  d3.select("#myChart1").remove();
+}
+
+
+function disegnaGrafico()
+{
+  d3.select("#div2").append("canvas").attr('id',"myChart1");
+  var ctx1 = document.getElementById('myChart1').getContext('2d');
+  var chart = new Chart(ctx1, {
+  type: 'line',
+  data: {
+    datasets: [{
+          label: 'n° Incidenti',
+          yAxisID: 'A',
+          labels: Object.keys(anno_incidenti),
+          data: Object.values(anno_incidenti),
+          borderColor: 'green'
+        }, {
+          label: 'n° Giorni con Precipitazione',
+           yAxisID: 'B',
+          data: Object.values(anno_precipitazioni),        //  valori precipitazioni
+          borderColor: 'blue',
+
+          // Changes this dataset to become a line
+          type: 'line'
+        }],
+    labels: Object.keys(anno_incidenti)
+    
+  },
+  options: 
+  {
+    scales: {
+      yAxes: [{
+        id: 'A',
+        type: 'linear',
+        position: 'left',
+         ticks: {
+            fontColor: "green",
+ //         max: 110,
+ //         min: 0
+        }
+      }, {
+        id: 'B',
+        type: 'linear',
+        position: 'right',
+        ticks: {
+            fontColor: "blue",
+ //         max: 110,
+ //         min: 0
+        }
+      }]
+    }
+  }
+});
+}
+
+
+
+</script>
