@@ -9,30 +9,47 @@
 <body>
 
 
-<div id="div1" hidden style="position:absolute;top:15%;left:10%;height:10%;width:40%;height:10em;">
-<canvas id="myChart"></canvas>
-</div>
 
-<div id="div2" style="position:absolute;top:15%;left:10%;height:10%;width:70%;height:20em;">
-	<input type="range" min="2008" max="2014" value="2008" class="slider" id="myRange">
-   <p>Anno: <span id="val"></span></p>
+
+
+
+<div id="div1" style="position:absolute;top:15%;left:2%;height:10%;width:45%;height:30em;" hidden>
+	<input type="range" min="2008" max="2014" value="2008" class="slider" id="Range1">
+   <p>Anno: <span id="val1"></span></p>
    <script>
-var slider = document.getElementById("myRange");
-var output = document.getElementById("val");
-output.innerHTML = slider.value;
+var slider1 = document.getElementById("Range1");
+var output1 = document.getElementById("val1");
+output1.innerHTML = slider1.value;
 
-slider.oninput = function() {
-  output.innerHTML = this.value;
-  drawGraph(output.innerHTML = this.value);
+slider1.oninput = function() {
+  output1.innerHTML = this.value;
+  drawGraph(output1.innerHTML = this.value,"1");
 }
 </script>
 <canvas id="myChart1"></canvas>
 
 </div>
 
-<div id="div3" style="position:absolute;top:50%;left:10%;height:10%;width:40%;height:10em;">
+
+
+<div id="div2" style="position:absolute;top:15%;left:50%;height:10%;width:45%;height:30em;" hidden>
+  <input type="range" min="2008" max="2014" value="2008" class="slider" id="Range2">
+   <p>Anno: <span id="val2"></span></p>
+   <script>
+var slider2 = document.getElementById("Range2");
+var output2 = document.getElementById("val2");
+output2.innerHTML = slider2.value;
+
+slider2.oninput = function() {
+  output2.innerHTML = this.value;
+  drawGraph(output2.innerHTML = this.value,"2");
+}
+</script>
 <canvas id="myChart2"></canvas>
+
 </div>
+
+
 
 <button id="btn_canc" value="Cancella" onclick="cancellaGrafico()">Cancella</button>
 <br>
@@ -43,8 +60,8 @@ Variabile 1
  <select id="var1" onchange="drawGraph()">
   <option value="null"></option>
   <option value="ds176-FIELD4-Numero incidenti">N° incidenti</option>
-  <option value="ds176-FIELD5-N° Feriti">N° Incidenti con Feriti</option>
-  <option value="ds176-FIELD6-N° Morti">N° Incidenti con Morti</option>
+  <option value="ds176-FIELD5-N° Feriti in Incidenti">N° Feriti in Incidenti</option>
+  <option value="ds176-FIELD6-N° Morti in Incidenti">N° Morti in Incidenti</option>
   <option value="ds176-FIELD3-Tipologia incidente">Tipologia incidente</option>
 </select> 
 
@@ -53,13 +70,12 @@ Variabile 2
   <option value="null"></option>
   <option value="ds306-Totale-Precipitazioni mensili">Precipitazioni mensili</option>
   <option value="ds306-N� giorni con precipitazione-N° giorni di precipitazione">N° giorni di precipitazione</option>
-  <option value="ds305-Media-Temperatura annuale">Temperatura annuale</option>
   <option value="ds305-Media-Temperatura mensile">Temperatura mensile</option>
-  <option value="ds305-Minima-Temperatura minima">Temperatura minima</option>
-  <option value="ds305-Massima-Temperatura massima">Temperatura massima</option>
-  <option value="ds176-FIELD5-Incidenti con Feriti">Incidenti con Feriti</option>
-  <option value="ds176-FIELD6-Incidenti con Morti">Incidenti con Morti</option>
-<!--  <option value="ds176-FIELD4">Numero Incidenti</option> -->
+  <option value="ds305-Minima-Temperatura mensile minima">Temperatura minima</option>
+  <option value="ds305-Massima-Temperatura mensile massima">Temperatura massima</option>
+  <option value="ds176-FIELD5-N° Feriti in Incidenti">N° Feriti in Incidenti</option>
+  <option value="ds176-FIELD6-N° Morti in Incidenti">N° Morti in Incidenti</option>
+  <!--  <option value="ds176-FIELD4">Numero Incidenti</option> -->
 </select> 
 
 Tipo Grafico
@@ -82,29 +98,46 @@ var array_valori=[];
 var nomi_file=['ds176','ds179','ds305','ds306'];
 var mesi = ['Gennaio','Febbraio', 'Marzo' ,'Aprile' ,'Maggio' ,'Giugno', 'Luglio','Agosto','Settembre' ,'Ottobre','Novembre','Dicembre'];
 init();
+var first=1;
 
-function drawGraph(anno=2008)
+function drawGraph(anno=2008,id_graph)
 {
   var prima=d3.select("#var1").node().value;
   var seconda=d3.select("#var2").node().value;
   if(prima!="null" && seconda!="null" && prima!=seconda)
-       traccia(prima,seconda,anno);
+  		{
+       		traccia(prima,seconda,anno,id_graph);
+       		if(first==1)
+       		{
+       			traccia(prima,seconda,anno,"2");
+       			first=0
+       		}
+
+  		}
   else
       {
         if(prima!=null)
-        {
-          traccia(prima,null,anno);
-        }
+       	 {
+        	  traccia(prima,null,anno,id_graph);
+        	  if(first==1)
+       		{
+       			traccia(prima,null,anno,"2");
+       			first=0
+       		}
+         }
       }
   
 }
 
 
 
-function traccia(prima,seconda,anno)
+function traccia(prima,seconda,anno,id_graph="1")
 {
-  d3.select("#myChart1").remove();
-  d3.select("#div2").append("canvas").attr('id',"myChart1");
+  //  .attr("hidden",true);//to hide
+  //   attr("hidden",null);//to show
+  d3.select("#myChart"+id_graph+"").remove();                                                                              
+  d3.select("#div"+id_graph+"").append("canvas").attr('id',"myChart"+id_graph+"");
+  d3.select("#div"+id_graph+"").attr('hidden',null);
   prima=prima.split("-");
   if(seconda!=null)
       seconda=seconda.split("-");
@@ -149,7 +182,7 @@ else
     bgcolor=colorGen(valori);
     border="";
 }
-      var ctx = document.getElementById('myChart1').getContext('2d');
+      var ctx = document.getElementById("myChart"+id_graph).getContext('2d');
       var chart = new Chart(ctx, {
       // The type of chart we want to create
       type: d3.select("#tipo").node().value,
@@ -157,7 +190,7 @@ else
       data: {
           labels: mesi,//Object.keys(valori), //["January", "February", "March", "April", "May", "June", "July"],
           datasets: [{
-                  //      label: prima[2],
+                        label: prima[2],
                         backgroundColor: bgcolor,//'rgb(255, 99, 132)',
                         borderColor: border,//'rgb(255, 99, 132)',
                         data: Object.values(valori) , //[0, 10, 5, 2, 20, 30, 45],
@@ -199,6 +232,8 @@ else
 {
 valori2=[];
 prima[3]="FIELD2";
+media_valori1=0;
+media_valori2=0;
 
 for (i=1;i<array_valori[prima[0]].length;i++)
 {
@@ -212,6 +247,7 @@ for (i=1;i<array_valori[prima[0]].length;i++)
         {
    				valori[array_valori[prima[0]][i][prima[3]]]=valori[array_valori[prima[0]][i][prima[3]]]+parseInt(array_valori[prima[0]][i][prima[1]]);
         }
+        media_valori1=media_valori1+parseInt(array_valori[prima[0]][i][prima[1]]);
     }
 }  
 
@@ -223,10 +259,22 @@ if(seconda[0]=="ds306")
           if(array_valori[seconda[0]][i]['Anno']==anno)
           {
               valori2[array_valori[seconda[0]][i]['Mese']]=parseFloat(array_valori[seconda[0]][i][seconda[1]]);
+              media_valori2=media_valori2+parseFloat(array_valori[seconda[0]][i][seconda[1]]);
           }    
       }
  }
 
+media_valori1_array=[];
+media_valori2_array=[];
+media_valori1=media_valori1/12;
+media_valori2=media_valori2/12;
+
+
+for(i=0;i<12;i++)
+{
+  media_valori1_array[i]=media_valori1;
+  media_valori2_array[i]=media_valori2;
+}
 
  /*
   else
@@ -261,7 +309,7 @@ if(d3.select("#tipo").node().value!="line")
   bgcolor[1]="blue";
 }
 
-var ctx = document.getElementById('myChart1').getContext('2d');
+var ctx = document.getElementById("myChart"+id_graph+"").getContext('2d');
 var chart = new Chart(ctx, {
   type: d3.select("#tipo").node().value,
   data: {
@@ -280,6 +328,22 @@ var chart = new Chart(ctx, {
           backgroundColor:bgcolor[1],
           // Changes this dataset to become a line
           type: d3.select("#tipo").node().value//'line'
+        },
+        {
+          label: "Media "+prima[2],
+           yAxisID: 'A',
+          data: media_valori1_array,        //  valori precipitazioni
+          borderColor: 'yellow',
+     //     backgroundColor:'yellow',
+          type: 'line'
+        },
+        {
+          label: "Media "+seconda[2],
+           yAxisID: 'B',
+          data: media_valori2_array,        //  valori precipitazioni
+          borderColor: 'orange',
+       //   backgroundColor:'orange',
+          type:'line'
         }],
     labels: mesi,//Object.keys(valori)
     
@@ -445,27 +509,6 @@ for (i=0;i<array_valori['ds306'].length;i++)
 
 
 
-var ctx = document.getElementById('myChart').getContext('2d');
-var chart = new Chart(ctx, {
-    // The type of chart we want to create
-    type: 'radar',
-  
-    // The data for our dataset
-    data: {
-        labels: Object.keys(tipo_incidenti), //["January", "February", "March", "April", "May", "June", "July"],
-        datasets: [{
-            label: "Frequenza Incidenti per tipologia",
-            backgroundColor: 'green',//'rgb(255, 99, 132)',
-            borderColor: 'blue',//'rgb(255, 99, 132)',
-            data: Object.values(tipo_incidenti) , //[0, 10, 5, 2, 20, 30, 45],
-        }]
-    },
-
-    
-    // Configuration options go here
-    options: {}
-});
-
 },100);   
 
 
@@ -480,7 +523,7 @@ function cancellaGrafico()
 function disegnaGrafico()
 {
   //primo grafico
-  d3.select("#div2").append("canvas").attr('id',"myChart1");
+  d3.select("#div1").append("canvas").attr('id',"myChart1");
   var ctx1 = document.getElementById('myChart1').getContext('2d');
   var chart = new Chart(ctx1, {
   type: 'line',
