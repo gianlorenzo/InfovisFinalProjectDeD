@@ -10,10 +10,7 @@
 
 
 
-
-
-
-<div id="div1" style="position:absolute;top:15%;left:2%;height:10%;width:45%;height:30em;" hidden>
+<div id="div1" style="position:absolute;top:15%;left:2%;height:10%;width:45%;height:40em;" hidden>
 	<input type="range" min="2008" max="2014" value="2008" class="slider" id="Range1">
    <p>Anno: <span id="val1"></span></p>
    <script>
@@ -32,7 +29,7 @@ slider1.oninput = function() {
 
 
 
-<div id="div2" style="position:absolute;top:15%;left:50%;height:10%;width:45%;height:30em;" hidden>
+<div id="div2" style="position:absolute;top:15%;left:50%;height:10%;width:45%;height:40em;" hidden>
   <input type="range" min="2008" max="2014" value="2008" class="slider" id="Range2">
    <p>Anno: <span id="val2"></span></p>
    <script>
@@ -82,10 +79,12 @@ Tipo Grafico
  <select id="tipo" onchange="drawGraph()">
   <option value="line">Linee</option>
   <option value="bar">Istogramma</option>
+  <!--
   <option value="pie">Torta</option>
   <option value="doughnut">Doughnut</option>
   <option value="radar">Radar</option>
   <option value="polarArea">Polar Area</option>
+-->
 </select> 
 
 
@@ -98,32 +97,44 @@ var array_valori=[];
 var nomi_file=['ds176','ds179','ds305','ds306'];
 var mesi = ['Gennaio','Febbraio', 'Marzo' ,'Aprile' ,'Maggio' ,'Giugno', 'Luglio','Agosto','Settembre' ,'Ottobre','Novembre','Dicembre'];
 init();
-var first=1;
 
-function drawGraph(anno=2008,id_graph)
+function drawGraph(anno=2008,id_graph="-1")
 {
   var prima=d3.select("#var1").node().value;
   var seconda=d3.select("#var2").node().value;
   if(prima!="null" && seconda!="null" && prima!=seconda)
   		{
-       		traccia(prima,seconda,anno,id_graph);
-       		if(first==1)
-       		{
-       			traccia(prima,seconda,anno,"2");
-       			first=0
+  			if(id_graph!=-1)
+  			{
+       			traccia(prima,seconda,anno,id_graph);
        		}
-
-  		}
+       		else
+       		{
+       			traccia(prima,seconda,anno,"1");
+       			traccia(prima,seconda,anno,"2");
+       		}
+       		
+       	}
+  		
   else
       {
-        if(prima!=null)
+        if(prima!="null")
        	 {
-        	  traccia(prima,null,anno,id_graph);
-        	  if(first==1)
-       		{
-       			traccia(prima,null,anno,"2");
-       			first=0
+        	  if(id_graph!=-1)
+  			{
+       			traccia(prima,null,anno,id_graph);
        		}
+       		else
+       		{
+       			traccia(prima,null,anno,"1");
+       			traccia(prima,null,anno,"2");
+       		}     		
+         }
+         else
+         {
+         			d3.select("#div1").attr('hidden',"true");
+         			d3.select("#div2").attr('hidden',"true"); 
+         			d3.select("#var2").property('value','null');
          }
       }
   
@@ -131,7 +142,7 @@ function drawGraph(anno=2008,id_graph)
 
 
 
-function traccia(prima,seconda,anno,id_graph="1")
+function traccia(prima,seconda,anno,id_graph)
 {
   //  .attr("hidden",true);//to hide
   //   attr("hidden",null);//to show
@@ -373,7 +384,6 @@ var chart = new Chart(ctx, {
     }
  }
 });
-
 }
 }
 
