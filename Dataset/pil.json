@@ -1,0 +1,158 @@
+{ "Variazione PIL pro capite a prezzi concatenati":
+ [
+  {
+   "Anno": "2004",
+   "Trentino": "100,0",
+   "Alto Adige": "100,0",
+   "Veneto": "100,0",
+   "Nord-Est": "100,0",
+   "Lombardia": "100,0",
+   "Italia": "100,0",
+   "Unione Europea": "100,0",
+   "Area Euro": "100,0"
+  }
+ ,{
+   "Anno": "2005",
+   "Trentino": "99,8",
+   "Alto Adige": "99,0",
+   "Veneto": "100,2",
+   "Nord-Est": "100,2",
+   "Lombardia": "99,8",
+   "Italia": "100,2",
+   "Unione Europea": "101,7",
+   "Area Euro": "101,2"
+  }
+ ,{
+   "Anno": "2006",
+   "Trentino": "100,4",
+   "Alto Adige": "101,8",
+   "Veneto": "101,3",
+   "Nord-Est": "102,1",
+   "Lombardia": "100,5",
+   "Italia": "101,6",
+   "Unione Europea": "104,7",
+   "Area Euro": "103,9"
+  }
+ ,{
+   "Anno": "2007",
+   "Trentino": "101,6",
+   "Alto Adige": "102,6",
+   "Veneto": "101,9",
+   "Nord-Est": "103,1",
+   "Lombardia": "101,2",
+   "Italia": "102,4",
+   "Unione Europea": "107,5",
+   "Area Euro": "106,5"
+  }
+ ,{
+   "Anno": "2008",
+   "Trentino": "99,0",
+   "Alto Adige": "101,7",
+   "Veneto": "98,6",
+   "Nord-Est": "100,3",
+   "Lombardia": "101,8",
+   "Italia": "100,5",
+   "Unione Europea": "107,5",
+   "Area Euro": "106,4"
+  }
+ ,{
+   "Anno": "2009",
+   "Trentino": "94,7",
+   "Alto Adige": "98,7",
+   "Veneto": "92,1",
+   "Nord-Est": "93,3",
+   "Lombardia": "94,7",
+   "Italia": "94,5",
+   "Unione Europea": "102,6",
+   "Area Euro": "101,3"
+  }
+ ,{
+   "Anno": "2010",
+   "Trentino": "96,1",
+   "Alto Adige": "100,8",
+   "Veneto": "93,3",
+   "Nord-Est": "94,6",
+   "Lombardia": "98,0",
+   "Italia": "95,6",
+   "Unione Europea": "104,6",
+   "Area Euro": "103,4"
+  }
+ ,{
+   "Anno": "2011",
+   "Trentino": "96,5",
+   "Alto Adige": "103,1",
+   "Veneto": "95,2",
+   "Nord-Est": "96,7",
+   "Lombardia": "99,2",
+   "Italia": "96,9",
+   "Unione Europea": "106,3",
+   "Area Euro": "105,0"
+  }
+ ,{
+   "Anno": "2012",
+   "Trentino": "95,1",
+   "Alto Adige": "104,6",
+   "Veneto": "92,7",
+   "Nord-Est": "94,6",
+   "Lombardia": "97,1",
+   "Italia": "94,9",
+   "Unione Europea": "105,6",
+   "Area Euro": "103,8"
+  }
+ ,{
+   "Anno": "2013",
+   "Trentino": "94,5",
+   "Alto Adige": "103,4",
+   "Veneto": "91,1",
+   "Nord-Est": "93,1",
+   "Lombardia": "93,9",
+   "Italia": "92,2",
+   "Unione Europea": "105,6",
+   "Area Euro": "103,2"
+  }
+ ,{
+   "Anno": "2014",
+   "Trentino": "94,3",
+   "Alto Adige": "103,1",
+   "Veneto": "91,1",
+   "Nord-Est": "93,1",
+   "Lombardia": "93,6",
+   "Italia": "91,5",
+   "Unione Europea": "107,2",
+   "Area Euro": "104,2"
+  }
+ ,{
+   "Anno": "2015",
+   "Trentino": "94,6",
+   "Alto Adige": "104,6",
+   "Veneto": "92,5",
+   "Nord-Est": "94,2",
+   "Lombardia": "94,6",
+   "Italia": "92,5",
+   "Unione Europea": "109,3",
+   "Area Euro": "106,0"
+  }
+ ,{
+   "Anno": "2016",
+   "Trentino": "95,2",
+   "Alto Adige": "106,4",
+   "Veneto": "93,5",
+   "Nord-Est": "95,6",
+   "Lombardia": "95,7",
+   "Italia": "93,5",
+   "Unione Europea": "",
+   "Area Euro": ""
+  }
+ ,{
+   "Anno": "2017",
+   "Trentino": "96,6",
+   "Alto Adige": "",
+   "Veneto": "",
+   "Nord-Est": "",
+   "Lombardia": "",
+   "Italia": "",
+   "Unione Europea": "",
+   "Area Euro": ""
+  }
+ ]
+}
