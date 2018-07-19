@@ -4,18 +4,17 @@
 <script type="text/javascript" src="Library/Chart.js"></script>
 <script type="text/javascript" src="Library/Chart.min.js"></script>
 <script type="text/javascript" src="Library/d3.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <style>
+
 .zoom {
-  /*  padding: 50px;*/
-    transition: transform .5s; /* Animation */
- /*   width: 200px;
-    height: 200px;*/
-    margin: 0 auto;
+    transition: transform .5s; 
+        margin: 0 auto;
 }
 
 .zoom1:hover {
   background-color: white;
-  transform: translateX(+45%) translateY(+25%) scale(1.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+  transform: translateX(+45%) translateY(+25%) scale(1.2); 
   z-index: 2;
   border:solid;
 }
@@ -23,23 +22,27 @@
   background-color: white;
   border:solid;
   z-index: 1;
-  transform: translateX(-45%) translateY(+25%) scale(1.6); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+  transform: translateX(-45%) translateY(+25%) scale(1.2); 
 }
 .zoom3:hover {
   background-color: white;
   border:solid;
   z-index: 1;
-  transform: translateX(0%) translateY(-50%) scale(1.6); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+  transform: translateX(+45%) translateY(-50%) scale(1.2)
+}/*
+.zoom4:hover {
+  background-color: white;
+  border:solid;
+  z-index: 1;
+  transform: translateX(-45%) translateY(-80%) scale(1.6); 
 }
 </style>
-
-
 </head>
 
 <body>
 
 
-<div id="div1" style="position:absolute;top:10%;left:2%;width:40%;height:30em;" hidden>
+<div id="div1" style="position:absolute;top:10%;left:2%;width:45%;height:30em;" hidden>
   <div align="center">
   <input type="range" min="2008" max="2014" value="2008" class="slider" id="Range1">
    <p>Anno: <span id="val1"></span></p>
@@ -59,7 +62,7 @@ slider1.oninput = function() {
 
 
 
-<div id="div2" style="position:absolute;top:10%;left:50%;width:40%;height:30em;" hidden>
+<div id="div2" style="position:absolute;top:10%;left:50%;width:45%;height:30em;" hidden>
   <div align="center">
   <input type="range" min="2008" max="2014" value="2008" class="slider" id="Range2">
    <p>Anno: <span id="val2"></span></p>
@@ -77,10 +80,13 @@ slider2.oninput = function() {
 
 </div>
 
-<div id="div3" style="position:absolute;top:60%;left:24%;width:40%;" hidden>
+<div id="div3" style="position:absolute;top:70%;left:2%;width:45%;" hidden>
 <canvas id="myChart3"></canvas>
 </div>
 
+<div id="div4" style="position:absolute;top:70%;left:48%;width:45%;" hidden>
+<canvas id="myChart4"></canvas>
+</div>
 
 <!--
 <button id="btn_canc" value="Cancella" onclick="cancellaGrafico()">Cancella</button>
@@ -91,7 +97,7 @@ slider2.oninput = function() {
 Variabile 1
  <select id="var1" onchange="drawGraph()">
   <option value="null"></option>
-  <option value="ds176-FIELD4-Numero incidenti">N° incidenti</option>
+  <option value="ds176-FIELD4-N° incidenti">N° incidenti</option>
   <option value="ds176-FIELD5-N° Feriti in Incidenti">N° Feriti in Incidenti</option>
   <option value="ds176-FIELD6-N° Morti in Incidenti">N° Morti in Incidenti</option>
   <option value="ds176-FIELD3-Tipologia incidente">Tipologia incidente</option>
@@ -187,6 +193,8 @@ function drawGraph(anno=0,id_graph="-1")
          {
               d3.select("#div1").attr('hidden',"true");
               d3.select("#div2").attr('hidden',"true"); 
+              d3.select("#div3").attr('hidden',"true");
+              d3.select("#div4").attr('hidden',"true"); 
               d3.select("#var2").property('value','null');
          }
       }
@@ -215,6 +223,83 @@ function traccia(prima,seconda,anno,id_graph)
   prima=prima.split("-");
   if(seconda!=null)
       seconda=seconda.split("-");
+var x=0;
+var y=0;
+  if(prima[1]=="FIELD3")
+  {
+    if(!document.getElementById("div3").hidden)
+    {
+      var pathTransition=d3.select("#myChart3").transition();
+      pathTransition.attr("transform", "translate("+x+","+y+")").duration(200);
+    }
+    
+    
+    if(seconda==null)
+    {
+      seconda=[];
+      seconda[1]="FIELD4";
+      seconda[2]="Totale"
+    }
+
+        for (i=1;i<array_valori[prima[0]].length;i++)
+        {
+            if(valori[array_valori[prima[0]][i][prima[1]]]==null)
+            {    
+              valori[array_valori[prima[0]][i][prima[1]]]=parseInt(array_valori[prima[0]][i][seconda[1]]);            
+            }
+              else
+              {
+                valori[array_valori[prima[0]][i][prima[1]]]=valori[array_valori[prima[0]][i][prima[1]]]+parseInt(array_valori[prima[0]][i][seconda[1]]); 
+              }
+        } 
+d3.select("#myChart4").remove();                                                                              
+d3.select("#div4").append("canvas").attr('id',"myChart4").attr('class','zoom4');
+d3.select("#div4").attr('hidden',null);     
+d3.select("#div4").append("canvas").attr('id',"myChart4");
+  var ctx4 = document.getElementById('myChart4').getContext('2d');
+  var chart4 = new Chart(ctx4, {
+  type: 'pie',
+  data: {
+    labels: Object.keys(valori),
+    datasets: [{
+         // label: Object.keys(valori),
+          labels: Object.keys(valori),
+          data: Object.values(valori),
+          backgroundColor: colorGen(valori)
+        }],  
+  },
+  options: 
+  {
+    title: {
+            display: true,
+            text: prima[2]+" vs "+ seconda[2],
+        },
+    tooltips: {
+  callbacks: {
+    label: function(tooltipItem, data) {
+      //get the concerned dataset
+      var dataset = data.datasets[tooltipItem.datasetIndex];
+      //calculate the total of this data set
+      var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+        return previousValue + currentValue;
+      });
+      //get the current items value
+      
+      var etichetta=dataset.labels[tooltipItem.index];
+      var currentValue = dataset.data[tooltipItem.index];
+      //calculate the precentage based on the total and current item, also this does a rough rounding to give a whole number
+      var precentage = Math.floor(((currentValue/total) * 100)+0.5);
+      return etichetta +":"+precentage + "%";
+    }
+  }
+}  
+  }
+});
+ document.getElementById("div4").scrollIntoView(); 
+  } 
+   
+else
+{
   if(seconda!=null && seconda[0]=='pil')
   {
         for (i=1;i<array_valori[prima[0]].length;i++)
@@ -246,6 +331,7 @@ function traccia(prima,seconda,anno,id_graph)
   d3.select("#myChart3").remove();                                                                              
   d3.select("#div3").append("canvas").attr('id',"myChart3").attr('class','zoom3');
   d3.select("#div3").attr('hidden',null);
+  document.getElementById("div3").scrollIntoView();
   if (d3.select("#tipo").node().value!="line")
     {
       bgcolor1="blue";
@@ -396,6 +482,7 @@ else
     },
  
     });
+  document.getElementById("div"+id_graph).scrollIntoView();
 }
 else
 {
@@ -502,6 +589,8 @@ var chart = new Chart(ctx, {
     }
  }
 });
+document.getElementById("div"+id_graph).scrollIntoView();
+}
 }
 }
 }
