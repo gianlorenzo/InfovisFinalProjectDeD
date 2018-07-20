@@ -6,12 +6,10 @@
 <script type="text/javascript" src="Library/d3.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <style>
-
 .zoom {
     transition: transform .5s; 
         margin: 0 auto;
 }
-
 .zoom1:hover {
   background-color: white;
   transform: translateX(+45%) translateY(+25%) scale(1.2); 
@@ -38,10 +36,7 @@
 }
 </style>
 </head>
-
 <body>
-
-
 <div id="div1" style="position:absolute;top:10%;left:2%;width:45%;height:30em;" hidden>
   <div align="center">
   <input type="range" min="2008" max="2014" value="2008" class="slider" id="Range1">
@@ -57,11 +52,7 @@ slider1.oninput = function() {
 }
 </script>
 <canvas id="myChart1"></canvas>
-
 </div>
-
-
-
 <div id="div2" style="position:absolute;top:10%;left:50%;width:45%;height:30em;" hidden>
   <div align="center">
   <input type="range" min="2008" max="2014" value="2008" class="slider" id="Range2">
@@ -77,25 +68,20 @@ slider2.oninput = function() {
 }
 </script>
 <canvas id="myChart2"></canvas>
-
 </div>
-
 <div id="div3" style="position:absolute;top:70%;left:2%;width:45%;" hidden>
 <canvas id="myChart3"></canvas>
 </div>
-
 <div id="div4" style="position:absolute;top:70%;left:48%;width:45%;" hidden>
 <canvas id="myChart4"></canvas>
 </div>
-
 <!--
 <button id="btn_canc" value="Cancella" onclick="cancellaGrafico()">Cancella</button>
 <br>
 -->
-
 <div align="center">
 Variabile 1
- <select id="var1" onchange="drawGraph()">
+ <select id="var1" onchange="populateSelect(this.value)">
   <option value="null"></option>
   <option value="ds176-FIELD4-N° incidenti">N° incidenti</option>
   <option value="ds176-FIELD5-N° Feriti in Incidenti">N° Feriti in Incidenti</option>
@@ -106,15 +92,18 @@ Variabile 1
 Variabile 2
  <select id="var2" onchange="drawGraph()">
   <option value="null"></option>
+  
   <option value="ds306-Totale-Precipitazioni mensili">Precipitazioni mensili</option>
-  <option value="ds306-N� giorni con precipitazione-N° giorni di precipitazione">N° giorni di precipitazione</option>
+ <!-- <option value="ds306-N� giorni con precipitazione-N° giorni di precipitazione">N° giorni di precipitazione</option>
   <option value="ds305-Media-Temperatura media mensile">Temperatura media mensile</option>
- <!-- <option value="ds305-Minima-Temperatura mensile minima">Temperatura minima</option>
-  <option value="ds305-Massima-Temperatura mensile massima">Temperatura massima</option>-->
+  <option value="ds305-Minima-Temperatura mensile minima">Temperatura minima</option>
+  <option value="ds305-Massima-Temperatura mensile massima">Temperatura massima</option>
   <option value="ds176-FIELD5-N° Feriti in Incidenti">N° Feriti in Incidenti</option>
   <option value="ds176-FIELD6-N° Morti in Incidenti">N° Morti in Incidenti</option>
   <option value="pil-Italia-Variazione Pil">Variazione Pil</option>
-  <!--  <option value="ds176-FIELD4">Numero Incidenti</option> -->
+  <option value="ds176-FIELD4-N° Incidenti">N° Incidenti</option> 
+-->
+
 </select> 
 
 Tipo Grafico
@@ -129,15 +118,32 @@ Tipo Grafico
 -->
 </select> 
 </div>
-
 </body>
-
 </html>
 <script>
+var selectOptions=[];
+selectOptions['numeri']=["ds306-Totale-Precipitazioni mensili","ds306-N� giorni con precipitazione-N° giorni di precipitazione","ds305-Media-Temperatura media mensile","pil-Italia-Variazione Pil"];
+selectOptions['tipo']=["ds176-FIELD5-N° Feriti in Incidenti","ds176-FIELD6-N° Morti in Incidenti","ds176-FIELD4-N° Incidenti"];
 var array_valori=[];
 var nomi_file=['ds176','ds179','ds305','ds306','pil'];                //    pil incidenti dal 2004 al 2014
 var mesi = ['Gennaio','Febbraio', 'Marzo' ,'Aprile' ,'Maggio' ,'Giugno', 'Luglio','Agosto','Settembre' ,'Ottobre','Novembre','Dicembre'];
 init();
+
+function populateSelect(value)
+{
+   index='numeri';
+       if(value=="ds176-FIELD3-Tipologia incidente")
+          index='tipo';
+   d3.select('#var2').node().options[1].remove(); 
+   d3.select('#var2').append('option').text(function(d) {
+       return 'a';
+ })
+   .attr("value", function(d) {
+return 'avlue';
+})
+
+}
+
 function drawGraph(anno=0,id_graph="-1")
 {
   var prima=d3.select("#var1").node().value;
@@ -200,7 +206,6 @@ function drawGraph(anno=0,id_graph="-1")
       }
   
 }
-
 function calcola_media(media,numero_elementi)
 {
   media_array=[];
@@ -210,7 +215,6 @@ function calcola_media(media,numero_elementi)
       }
      return media_array; 
 }
-
 function traccia(prima,seconda,anno,id_graph)
 {
   //  .attr("hidden",true);//to hide
@@ -240,7 +244,6 @@ var y=0;
       seconda[1]="FIELD4";
       seconda[2]="Totale"
     }
-
         for (i=1;i<array_valori[prima[0]].length;i++)
         {
             if(valori[array_valori[prima[0]][i][prima[1]]]==null)
@@ -310,7 +313,6 @@ else
                 {
                     valori[array_valori[prima[0]][i]["FIELD1"]]=parseInt(array_valori[prima[0]][i][prima[1]]);
                     media1=media1+parseInt(array_valori[prima[0]][i][prima[1]]);
-
                 }
             else
                 {
@@ -327,7 +329,6 @@ else
              media2=media2+parseInt(array_valori[seconda[0]]["Variazione PIL pro capite a prezzi concatenati"][i][seconda[1]]);   
             }
         }
-
   d3.select("#myChart3").remove();                                                                              
   d3.select("#div3").append("canvas").attr('id',"myChart3").attr('class','zoom3');
   d3.select("#div3").attr('hidden',null);
@@ -402,7 +403,6 @@ var chart3 = new Chart(ctx3, {
  }
 });
   }
-
   else
   {
   d3.select("#myChart"+id_graph+"").remove();                                                                              
@@ -515,10 +515,8 @@ if(seconda[0]=="ds306" || seconda[0]=="ds305")
           }    
       }
  }
-
 media_valori1=media_valori1/12;
 media_valori2=media_valori2/12;
-
 var bgcolor=[];
 if(d3.select("#tipo").node().value!="line")
 {
@@ -616,6 +614,8 @@ for(var key in Object.keys(array))
 }
 return myColors;
 }
+
+
 /************ Caricamento dati dai file openData   ********************/
 function init() {
     for(i=0;i<nomi_file.length;i++)
@@ -638,8 +638,8 @@ function loadJSON(file,callback) {
     }; 
     xobj.send(null);  
  }
-/************ Fine caricamento dati   ********************/
 
+/************ Fine caricamento dati   ********************/
 setTimeout(function(){
 // da qui ho accesso hai dati
 tipo_incidenti=[];
@@ -683,59 +683,4 @@ for (i=0;i<array_valori['ds306'].length;i++)
 }
 },100);  
 
-function cancellaGrafico()
-{
-  d3.select("#myChart1").remove();
-}
-function disegnaGrafico()
-{
-  //primo grafico
-  d3.select("#div1").append("canvas").attr('id',"myChart1");
-  var ctx1 = document.getElementById('myChart1').getContext('2d');
-  var chart = new Chart(ctx1, {
-  type: 'line',
-  data: {
-    datasets: [{
-          label: 'n° Incidenti',
-          yAxisID: 'A',
-          labels: Object.keys(anno_incidenti),
-          data: Object.values(anno_incidenti),
-          borderColor: 'green'
-        }, {
-          label: 'n° Giorni con Precipitazione',
-           yAxisID: 'B',
-          data: Object.values(anno_precipitazioni),        //  valori precipitazioni
-          borderColor: 'blue',
-          // Changes this dataset to become a line
-          type: 'line'
-        }],
-    labels: Object.keys(anno_incidenti)
-    
-  },
-  options: 
-  {
-    scales: {
-      yAxes: [{
-        id: 'A',
-        type: 'linear',
-        position: 'left',
-         ticks: {
-            fontColor: "green",
- //         max: 110,
- //         min: 0
-        }
-      }, {
-        id: 'B',
-        type: 'linear',
-        position: 'right',
-        ticks: {
-            fontColor: "blue",
- //         max: 110,
- //         min: 0
-        }
-      }]
-    }
-  }
-});
-}
 </script>
