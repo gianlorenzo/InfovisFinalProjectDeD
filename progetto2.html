@@ -11,18 +11,21 @@
         margin: 0 auto;
 }
 .zoom1:hover {
+  position: relative;
   background-color: white;
   transform: translateX(+45%) translateY(+25%) scale(1.2); 
   z-index: 2;
   border:solid;
 }
 .zoom2:hover {
+  position: relative;
   background-color: white;
   border:solid;
   z-index: 1;
   transform: translateX(-45%) translateY(+25%) scale(1.2); 
 }
 .zoom3:hover {
+  position: relative;
   background-color: white;
   border:solid;
   z-index: 1;
@@ -43,12 +46,14 @@
    <p>Anno: <span id="val1"></span></p>
  </div>
    <script>
+var primaHold="";
+var secondaHold="";
 var slider1 = document.getElementById("Range1");
 var output1 = document.getElementById("val1");
 output1.innerHTML = slider1.value;
 slider1.oninput = function() {
   output1.innerHTML = this.value;
-  drawGraph(output1.innerHTML = this.value,"1");
+  drawGraph(output1.innerHTML = this.value,"1",primaHold,secondaHold);
 }
 </script>
 <canvas id="myChart1"></canvas>
@@ -64,7 +69,7 @@ var output2 = document.getElementById("val2");
 output2.innerHTML = slider2.value;
 slider2.oninput = function() {
   output2.innerHTML = this.value;
-  drawGraph(output2.innerHTML = this.value,"2");
+  drawGraph(output2.innerHTML = this.value,"2",primaHold,secondaHold);
 }
 </script>
 <canvas id="myChart2"></canvas>
@@ -88,13 +93,12 @@ Variabile 1
   <option value="ds176-FIELD6-N° Morti in Incidenti">N° Morti in Incidenti</option>
   <option value="ds176-FIELD3-Tipologia incidente">Tipologia incidente</option>
 </select> 
-
 Variabile 2
  <select id="var2" onchange="drawGraph()">
   <option value="null"></option>
-  
+ <!-- 
   <option value="ds306-Totale-Precipitazioni mensili">Precipitazioni mensili</option>
- <!-- <option value="ds306-N� giorni con precipitazione-N° giorni di precipitazione">N° giorni di precipitazione</option>
+  <option value="ds306-N� giorni con precipitazione-N° giorni di precipitazione">N° giorni di precipitazione</option>
   <option value="ds305-Media-Temperatura media mensile">Temperatura media mensile</option>
   <option value="ds305-Minima-Temperatura mensile minima">Temperatura minima</option>
   <option value="ds305-Massima-Temperatura mensile massima">Temperatura massima</option>
@@ -103,9 +107,7 @@ Variabile 2
   <option value="pil-Italia-Variazione Pil">Variazione Pil</option>
   <option value="ds176-FIELD4-N° Incidenti">N° Incidenti</option> 
 -->
-
 </select> 
-
 Tipo Grafico
  <select id="tipo" onchange="drawGraph()">
   <option value="line">Linee</option>
@@ -122,32 +124,60 @@ Tipo Grafico
 </html>
 <script>
 var selectOptions=[];
-selectOptions['numeri']=["ds306-Totale-Precipitazioni mensili","ds306-N� giorni con precipitazione-N° giorni di precipitazione","ds305-Media-Temperatura media mensile","pil-Italia-Variazione Pil"];
-selectOptions['tipo']=["ds176-FIELD5-N° Feriti in Incidenti","ds176-FIELD6-N° Morti in Incidenti","ds176-FIELD4-N° Incidenti"];
+var maxScale=[];
+maxScale={'FIELD4': 1400,'FIELD5': 2000,'FIELD6': 12,'Totale':350,'N� giorni con precipitazione':25,'Media':30};
+selectOptions['numeri']=["","ds306-Totale-Precipitazioni mensili","ds306-N� giorni con precipitazione-N° giorni di precipitazione","ds305-Media-Temperatura media mensile","pil-Italia-Variazione PIL"];
+selectOptions['tipo']=["","ds176-FIELD5-N° Feriti in Incidenti","ds176-FIELD6-N° Morti in Incidenti","ds176-FIELD4-N° Incidenti"];
 var array_valori=[];
 var nomi_file=['ds176','ds179','ds305','ds306','pil'];                //    pil incidenti dal 2004 al 2014
 var mesi = ['Gennaio','Febbraio', 'Marzo' ,'Aprile' ,'Maggio' ,'Giugno', 'Luglio','Agosto','Settembre' ,'Ottobre','Novembre','Dicembre'];
 init();
+
 
 function populateSelect(value)
 {
    index='numeri';
        if(value=="ds176-FIELD3-Tipologia incidente")
           index='tipo';
-   d3.select('#var2').node().options[1].remove(); 
-   d3.select('#var2').append('option').text(function(d) {
-       return 'a';
- })
-   .attr("value", function(d) {
-return 'avlue';
-})
+       var j=d3.select('#var2').node().options.length;
+        for(var i=0;i<j;i++)
+        {
+          d3.select('#var2').node().options[0].remove();
+        }
+    
+   for(i=0;i<selectOptions[index].length;i++)
+   { 
+        d3.select('#var2').append('option').text(function(d) {
+          if(i==0)
+                return "";
+          else
+               return selectOptions[index][i].split("-")[2];
+            })
+            .attr("value", function(d) {
+              if(i==0)
+                return "null";
+          else
+               return selectOptions[index][i];
+            })
+    }
 
+    drawGraph();
 }
-
-function drawGraph(anno=0,id_graph="-1")
+function drawGraph(anno=0,id_graph="-1",prima="null",seconda="null")
 {
-  var prima=d3.select("#var1").node().value;
-  var seconda=d3.select("#var2").node().value;
+  var check=0;
+  if(prima=="null")
+  {
+        var prima=d3.select("#var1").node().value;
+        var seconda=d3.select("#var2").node().value;
+  }
+  if(prima!="ds176-FIELD3-Tipologia incidente" && seconda!="pil-Italia-Variazione PIL")
+  {
+    primaHold=prima;
+    secondaHold=seconda;
+    check=1;
+  }
+
   var annoarr=[];
   
   if(anno==0)
@@ -161,9 +191,9 @@ function drawGraph(anno=0,id_graph="-1")
   }
   if(prima!="null" && seconda!="null" && prima!=seconda)
       {
-        if(id_graph!=-1)
+        if(id_graph!=-1 && check==1)
         {
-            traccia(prima,seconda,annoarr[id_graph],id_graph);
+            traccia(primaHold,secondaHold,annoarr[id_graph],id_graph);
           }
           else
           {
@@ -230,14 +260,7 @@ function traccia(prima,seconda,anno,id_graph)
 var x=0;
 var y=0;
   if(prima[1]=="FIELD3")
-  {
-    if(!document.getElementById("div3").hidden)
-    {
-      var pathTransition=d3.select("#myChart3").transition();
-      pathTransition.attr("transform", "translate("+x+","+y+")").duration(200);
-    }
-    
-    
+  {    
     if(seconda==null)
     {
       seconda=[];
@@ -403,7 +426,7 @@ var chart3 = new Chart(ctx3, {
  }
 });
   }
-  else
+  else      // GRAFICI IN COMPARAZIONE
   {
   d3.select("#myChart"+id_graph+"").remove();                                                                              
   d3.select("#div"+id_graph+"").append("canvas").attr('id',"myChart"+id_graph+"").attr('class','zoom'+id_graph+'');
@@ -417,6 +440,7 @@ if(seconda==null)
   seconda[0]="null";
   seconda[1]=prima[1];
 }
+prima[4]=prima[1];
 if(prima[1]!="FIELD3")
   {
     prima[1]="FIELD2";
@@ -465,7 +489,7 @@ else
         position: 'left',
          ticks: {
   //          fontColor: "green",
- //         max: 110,
+         max: maxScale[prima[4]],
          min: 0
         }
       },/* {
@@ -482,7 +506,7 @@ else
     },
  
     });
-  document.getElementById("div"+id_graph).scrollIntoView();
+  //document.getElementById("div"+id_graph).scrollIntoView();
 }
 else
 {
@@ -571,7 +595,7 @@ var chart = new Chart(ctx, {
         position: 'left',
          ticks: {
             fontColor: "blue",
- //         max: 110,
+          max: maxScale[prima[1]],
           min: 0
         }
       }, {
@@ -580,14 +604,14 @@ var chart = new Chart(ctx, {
         position: 'right',
         ticks: {
             fontColor: "green",
- //         max: 110,
+          max: maxScale[seconda[1]],
           min: 0
         }
       }]
     }
  }
 });
-document.getElementById("div"+id_graph).scrollIntoView();
+//document.getElementById("div"+id_graph).scrollIntoView();
 }
 }
 }
@@ -614,8 +638,6 @@ for(var key in Object.keys(array))
 }
 return myColors;
 }
-
-
 /************ Caricamento dati dai file openData   ********************/
 function init() {
     for(i=0;i<nomi_file.length;i++)
@@ -638,7 +660,6 @@ function loadJSON(file,callback) {
     }; 
     xobj.send(null);  
  }
-
 /************ Fine caricamento dati   ********************/
 setTimeout(function(){
 // da qui ho accesso hai dati
@@ -682,5 +703,4 @@ for (i=0;i<array_valori['ds306'].length;i++)
     }
 }
 },100);  
-
 </script>
